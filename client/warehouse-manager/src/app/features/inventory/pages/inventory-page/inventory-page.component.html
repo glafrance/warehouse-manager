@@ -1,0 +1,104 @@
+<section class="page">
+  <div class="page__header">
+    <div class="page__title">
+      <h1>Inventory</h1>
+      <p>This page is protected and demonstrates CRUD for a main warehouse entity.</p>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="button button--secondary" (click)="loadItems()">Refresh</button>
+      <button type="button" class="button button--secondary" (click)="resetForm()">Clear Form</button>
+    </div>
+  </div>
+
+  <div class="grid grid--2">
+    <div class="card">
+      <h2>{{ editingItemId == null ? 'Add Inventory Item' : 'Edit Inventory Item' }}</h2>
+
+      <form class="grid" [formGroup]="form" (ngSubmit)="save()">
+        <div class="field">
+          <label for="sku">SKU</label>
+          <input id="sku" type="text" formControlName="sku" />
+          <div class="error-text" *ngIf="hasError('sku', 'required')">SKU is required.</div>
+        </div>
+
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" type="text" formControlName="name" />
+          <div class="error-text" *ngIf="hasError('name', 'required')">Name is required.</div>
+        </div>
+
+        <div class="field">
+          <label for="quantity">Quantity</label>
+          <input id="quantity" type="number" formControlName="quantity" />
+          <div class="error-text" *ngIf="hasError('quantity', 'required')">Quantity is required.</div>
+          <div class="error-text" *ngIf="hasError('quantity', 'min')">Quantity cannot be negative.</div>
+        </div>
+
+        <div class="field">
+          <label for="location">Location</label>
+          <input id="location" type="text" formControlName="location" />
+          <div class="error-text" *ngIf="hasError('location', 'required')">Location is required.</div>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" formControlName="description"></textarea>
+        </div>
+
+        <div class="error-text" *ngIf="submitError">{{ submitError }}</div>
+
+        <div class="actions">
+          <button type="submit" [disabled]="saving">
+            {{ editingItemId == null ? 'Create Item' : 'Update Item' }}
+          </button>
+          <button type="button" class="button button--secondary" (click)="resetForm()">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <h2>Current Inventory</h2>
+        <span class="pill">{{ items.length }} item(s)</span>
+      </div>
+
+      <div *ngIf="loading">Loading inventory...</div>
+
+      <div class="table-wrap" *ngIf="!loading">
+        <table *ngIf="items.length > 0; else emptyItems">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Name</th>
+              <th>Qty</th>
+              <th>Location</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td>{{ item.sku }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.location }}</td>
+              <td>{{ item.description || '—' }}</td>
+              <td>
+                <div class="actions">
+                  <button type="button" class="button button--secondary" (click)="editItem(item)">Edit</button>
+                  <button type="button" (click)="deleteItem(item)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #emptyItems>
+          <p class="empty-state">No inventory items have been created yet.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>

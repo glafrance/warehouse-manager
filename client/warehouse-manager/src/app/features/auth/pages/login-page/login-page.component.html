@@ -1,0 +1,32 @@
+<section class="page">
+  <div class="page__header">
+    <div class="page__title">
+      <h1>Login</h1>
+      <p>Sign in to access protected warehouse features.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <form class="grid" [formGroup]="form" (ngSubmit)="login()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+        <div class="error-text" *ngIf="hasError('email', 'required')">Email is required.</div>
+        <div class="error-text" *ngIf="hasError('email', 'email')">Enter a valid email address.</div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" />
+        <div class="error-text" *ngIf="hasError('password', 'required')">Password is required.</div>
+      </div>
+
+      <div class="error-text" *ngIf="submitError">{{ submitError }}</div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="submitting">Login</button>
+        <a routerLink="/register" class="button button--secondary">Create Account</a>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,61 @@
+<section class="page">
+  <div class="page__header">
+    <div class="page__title">
+      <h1>Register</h1>
+      <p>Create a user account for the warehouse application.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <form class="form-grid" [formGroup]="form" (ngSubmit)="register()">
+      <div class="field">
+        <label for="firstName">First Name</label>
+        <input id="firstName" type="text" formControlName="firstName" />
+        <div class="error-text" *ngIf="hasError('firstName', 'required')">First name is required.</div>
+      </div>
+
+      <div class="field">
+        <label for="lastName">Last Name</label>
+        <input id="lastName" type="text" formControlName="lastName" />
+        <div class="error-text" *ngIf="hasError('lastName', 'required')">Last name is required.</div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+        <div class="error-text" *ngIf="hasError('email', 'required')">Email is required.</div>
+        <div class="error-text" *ngIf="hasError('email', 'email')">Enter a valid email address.</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input id="phone" type="text" formControlName="phone" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" />
+        <div class="error-text" *ngIf="hasError('password', 'required')">Password is required.</div>
+        <div class="error-text" *ngIf="hasError('password', 'minlength')">Password must be at least 8 characters.</div>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirm Password</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword" />
+        <div class="error-text" *ngIf="hasError('confirmPassword', 'required')">Please confirm the password.</div>
+      </div>
+
+      <div class="field field--full">
+        <div class="error-text" *ngIf="submitError">{{ submitError }}</div>
+        <div class="success-text" *ngIf="submitSuccess">{{ submitSuccess }}</div>
+      </div>
+
+      <div class="field field--full">
+        <div class="actions">
+          <button type="submit" [disabled]="submitting">Create Account</button>
+          <a routerLink="/login" class="button button--secondary">Back to Login</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

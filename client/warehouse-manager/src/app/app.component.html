@@ -1,0 +1,46 @@
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <a routerLink="/dashboard">Warehouse Manager</a>
+    </div>
+
+    <nav class="nav">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+
+      <ng-container *ngIf="authService.isAuthenticated(); else guestLinks">
+        <a routerLink="/inventory" routerLinkActive="active">Inventory</a>
+
+        <a
+          *ngIf="authService.hasAnyRole(['ADMIN'])"
+          routerLink="/admin/users"
+          routerLinkActive="active"
+        >
+          Admin Users
+        </a>
+
+        <button type="button" class="link-button" (click)="logout()">Logout</button>
+      </ng-container>
+
+      <ng-template #guestLinks>
+        <a routerLink="/login" routerLinkActive="active">Login</a>
+        <a routerLink="/register" routerLinkActive="active">Register</a>
+      </ng-template>
+    </nav>
+  </header>
+
+  <section
+    class="global-error"
+    *ngIf="globalErrorService.error$ | async as globalError"
+  >
+    <div class="global-error__content">
+      <strong>Something went wrong:</strong>
+      <span>{{ globalError }}</span>
+    </div>
+
+    <button type="button" (click)="dismissGlobalError()">Dismiss</button>
+  </section>
+
+  <main class="page-shell">
+    <router-outlet />
+  </main>
+</div>

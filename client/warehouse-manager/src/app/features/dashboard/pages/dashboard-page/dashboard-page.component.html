@@ -1,0 +1,42 @@
+<section class="page">
+  <div class="page__header">
+    <div class="page__title">
+      <h1>Dashboard</h1>
+      <p>Start here after login. This page confirms protected routing is working.</p>
+    </div>
+  </div>
+
+  <div class="grid grid--2">
+    <article class="card">
+      <h2>Current User</h2>
+
+      <ng-container *ngIf="authService.currentUser$ | async as user; else noUser">
+        <p><strong>Name:</strong> {{ user.firstName }} {{ user.lastName }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone || '—' }}</p>
+        <p>
+          <strong>Roles:</strong>
+          <span class="pill" *ngFor="let role of user.roles">{{ role }}</span>
+        </p>
+      </ng-container>
+
+      <ng-template #noUser>
+        <p class="empty-state">No user is currently loaded.</p>
+      </ng-template>
+    </article>
+
+    <article class="card">
+      <h2>Available Pages</h2>
+      <div class="actions">
+        <a routerLink="/inventory" class="button">Inventory CRUD</a>
+        <a
+          *ngIf="authService.hasAnyRole(['ADMIN'])"
+          routerLink="/admin/users"
+          class="button button--secondary"
+        >
+          Admin Users
+        </a>
+      </div>
+    </article>
+  </div>
+</section>
