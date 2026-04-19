@@ -3,6 +3,7 @@ package com.example.warehouse_api.inventory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 public class InventoryItemRequest {
 
@@ -18,6 +19,9 @@ public class InventoryItemRequest {
 
     @NotBlank(message = "Location is required.")
     private String location;
+
+    @Size(max = 1000, message = "Description must be 1000 characters or fewer.")
+    private String description;
 
     public String getSku() {
         return sku;
@@ -49,5 +53,13 @@ public class InventoryItemRequest {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

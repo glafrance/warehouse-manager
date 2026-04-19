@@ -1,0 +1,41 @@
+{
+  "family": "warehouse-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::510490942892:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "warehouse-api",
+      "image": "510490942892.dkr.ecr.us-east-2.amazonaws.com/warehouse-api:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "DB_URL", "value": "jdbc:postgresql://warehouse-postgres.c78qsym8cd63.us-east-2.rds.amazonaws.com:5432/warehouse_db" },
+        { "name": "DB_USERNAME", "value": "warehouse_user" },
+        { "name": "APP_CORS_ALLOWED_ORIGINS", "value": "http://localhost:4200" },
+        { "name": "JWT_ACCESS_TOKEN_MINUTES", "value": "15" },
+        { "name": "JWT_REFRESH_TOKEN_DAYS", "value": "7" },
+        { "name": "DDL_AUTO", "value": "update" }
+      ],
+      "secrets": [
+        { "name": "DB_PASSWORD", "valueFrom": "arn:aws:secretsmanager:us-east-2:510490942892:secret:warehouse/db-password-ZGt7GK" },
+        { "name": "JWT_SECRET", "valueFrom": "arn:aws:secretsmanager:us-east-2:510490942892:secret:warehouse/jwt-secret-O1kwKM" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/warehouse-api",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

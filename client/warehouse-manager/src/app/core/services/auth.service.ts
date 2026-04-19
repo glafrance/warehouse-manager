@@ -5,7 +5,17 @@ import {
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, finalize, of, shareReplay, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  finalize,
+  map,
+  of,
+  shareReplay,
+  tap,
+  throwError,
+} from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
@@ -111,6 +121,36 @@ export class AuthService {
     return this.refreshRequest$;
   }
 
+  initializeAuthState(): Observable<boolean> {
+    if (this.getAccessToken()) {
+      return this.http.get<AuthUser>(
+        `${this.apiBaseUrl}/auth/me`,
+        {
+          context: new HttpContext().set(SKIP_GLOBAL_ERROR, true),
+        },
+      ).pipe(
+        tap((user) => this.storeCurrentUser(user)),
+        map(() => true),
+        catchError(() => {
+          this.clearSession();
+          return of(false);
+        }),
+      );
+    }
+
+    if (this.hasRefreshToken()) {
+      return this.refreshAccessToken().pipe(
+        map(() => true),
+        catchError(() => {
+          this.clearSession();
+          return of(false);
+        }),
+      );
+    }
+
+    return of(false);
+  }
+
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
@@ -150,8 +190,12 @@ export class AuthService {
   private handleAuthSuccess(response: AuthResponse): void {
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
-    localStorage.setItem('currentUser', JSON.stringify(response.user));
-    this.currentUserSubject.next(response.user);
+    this.storeCurrentUser(response.user);
+  }
+
+  private storeCurrentUser(user: AuthUser): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
   }
 
   private readStoredUser(): AuthUser | null {

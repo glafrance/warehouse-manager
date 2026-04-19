@@ -47,7 +47,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         if (userAccountRepository.existsByEmailIgnoreCase(request.email())) {
             throw new IllegalArgumentException("That email address is already registered.");
         }
@@ -61,10 +61,7 @@ public class AuthService {
         user.setEnabled(true);
         user.setRoles(Set.of(UserRole.USER));
 
-        UserAccount savedUser = userAccountRepository.save(user);
-        RefreshToken refreshToken = createAndSaveRefreshToken(savedUser);
-
-        return buildAuthResponse(savedUser, refreshToken.getToken());
+        userAccountRepository.save(user);
     }
 
     @Transactional
@@ -104,6 +101,22 @@ public class AuthService {
         return buildAuthResponse(user, newRefreshToken.getToken());
     }
 
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.findByToken(refreshToken).ifPresent(token -> {
+            token.setRevoked(true);
+            refreshTokenRepository.save(token);
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public AuthUserResponse getCurrentUser(String email) {
+        UserAccount user = userAccountRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new BadCredentialsException("User not found."));
+
+        return toAuthUserResponse(user);
+    }
+
     private RefreshToken createAndSaveRefreshToken(UserAccount user) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken(UUID.randomUUID().toString());
@@ -116,21 +129,23 @@ public class AuthService {
     private AuthResponse buildAuthResponse(UserAccount user, String refreshToken) {
         String accessToken = jwtService.generateAccessToken(user);
 
-        AuthUserResponse authUser = new AuthUserResponse(
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                "Bearer",
+                jwtService.getAccessTokenExpiresInSeconds(),
+                toAuthUserResponse(user)
+        );
+    }
+
+    private AuthUserResponse toAuthUserResponse(UserAccount user) {
+        return new AuthUserResponse(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 user.getPhone(),
                 user.getRoles().stream().map(Enum::name).collect(Collectors.toSet())
-        );
-
-        return new AuthResponse(
-                accessToken,
-                refreshToken,
-                "Bearer",
-                jwtService.getAccessTokenExpiresInSeconds(),
-                authUser
         );
     }
 }

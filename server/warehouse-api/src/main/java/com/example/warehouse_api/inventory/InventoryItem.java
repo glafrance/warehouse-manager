@@ -27,6 +27,9 @@ public class InventoryItem {
     @Column(nullable = false)
     private String location;
 
+    @Column(length = 1000)
+    private String description;
+
     public Long getId() {
         return id;
     }
@@ -65,5 +68,13 @@ public class InventoryItem {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

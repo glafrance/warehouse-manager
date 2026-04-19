@@ -45,5 +45,6 @@ public class InventoryItemService {
         item.setName(request.getName());
         item.setQuantity(request.getQuantity());
         item.setLocation(request.getLocation());
+        item.setDescription(request.getDescription());
     }
 }
