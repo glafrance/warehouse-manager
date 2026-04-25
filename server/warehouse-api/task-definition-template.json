@@ -17,7 +17,7 @@
         }
       ],
       "environment": [
-        { "name": "DB_URL", "value": "jdbc:postgresql://warehouse-postgres.c78qsym8cd63.us-east-2.rds.amazonaws.com:5432/warehouse_db" },
+        { "name": "DB_URL", "value": "jdbc:postgresql://warehouse-postgres.c78qsym8cd63.us-east-2.rds.amazonaws.com:5432/warehouse-db" },
         { "name": "DB_USERNAME", "value": "warehouse_user" },
         { "name": "APP_CORS_ALLOWED_ORIGINS", "value": "http://localhost:4200" },
         { "name": "JWT_ACCESS_TOKEN_MINUTES", "value": "15" },
