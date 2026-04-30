@@ -51,6 +51,10 @@ resource "aws_secretsmanager_secret" "db" {
   }
 }
 
+resource "random_bytes" "jwt" {
+  length = 32
+}
+
 resource "aws_secretsmanager_secret_version" "db" {
   secret_id = aws_secretsmanager_secret.db.id
   secret_string = jsonencode({
@@ -59,5 +63,6 @@ resource "aws_secretsmanager_secret_version" "db" {
     dbname   = aws_db_instance.warehouse.db_name
     username = var.db_username
     password = random_password.db.result
+    jwt      = random_bytes.jwt.base64
   })
 }
