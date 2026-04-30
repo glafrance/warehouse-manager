@@ -1,1 +1,13 @@
-/terraform/*
+# Ignore the local terraform state (contains passwords!)
+*.tfstate
+*.tfstate.*
+
+# Ignore the local provider binaries and initialization
+.terraform/
+
+# Ignore your local variable files (where you might put secrets)
+*.tfvars
+*.tfvars.json
+
+# Ignore crash logs
+crash.log

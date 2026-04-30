@@ -1,0 +1,23 @@
+# Local .env / variable files — never commit secrets
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+# Terraform state — contains plaintext secrets (DB password, secret_string)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Plugin cache, lockfile is OK to commit
+.terraform/
+.terraform.lock.hcl.bak
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
